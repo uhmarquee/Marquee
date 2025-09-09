@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marquee</title>
+<style>
+body 
+{margin: 0; /* Remove default body margins for full control */
+padding: 0;
+background-color: rgb(70, 0, 0);}
+
+h1 
+{text-align: center; /* Horizontal centering of text inside h1 */
+margin-top: 20px; 
+margin-bottom: 500px;} /* Ensure no top margin pushes it down */
+       
+    h1 a 
+    {color: rgb(0, 0, 157); /* Solid black text */
+    font-size: 30px;
+    text-decoration: none; /* No underline ever */
+    cursor: pointer;} /* Hand pointer to show it's clickable */
+        
+    h1 a:hover,
+    h1 a:visited,
+    h1 a:active 
+    {color: black; /* No color change on hover, visit, or click */
+    text-decoration: none;} /* Ensure no underline appears */
+        
+/* If using the .container div */
+.container 
+{width: 100%; /* Full width or set a max-width for responsiveness */
+text-align: center;} /* Centers inline elements like the h1 */
+        
+    /* New styles for video section */
+    h2 
+    {text-align: center;
+    color: #333;
+    margin: 20px 0; }
+       
+    video 
+    {display: block;
+    margin: 0 auto; /* Center the video horizontally */
+    max-width: 100%; /* Responsive: scales down on smaller screens */
+    height: auto; /* Maintain aspect ratio */
+    border: 1px solid #ccc; /* Optional border for visibility */
+    border-radius: 8px;}
+
+</style>
+</head>
+
+<body>
+<div class="container">
+    <h1><a href="francescaloren.html">"MARQUEE"</a></h1>
+</div>
+    
+<!-- New video section -->
+<video width="1000" height="700" controls>
+    <source src="john_mayer.mp4" type="video/mp4">
+</video>
+</body>
+</html>
