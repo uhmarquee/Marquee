@@ -6,7 +6,7 @@ import {CartSummary} from './CartSummary';
 /**
  * Returns a map of all line items and their children.
  * @param {CartLine[]} lines
- * @return {import("/Users/hq/francesca-loren/francesca-loren/app/components/CartMain").LineItemChildrenMap}
+ * @return {import("/Users/hq/francesca-loren/node_modules/@shopify/cli/dist/assets/hydrogen/starter/app/components/CartMain").LineItemChildrenMap}
  */
 function getLineItemChildrenMap(lines) {
   const children = {};
@@ -45,10 +45,7 @@ export function CartMain({layout, cart: originalCart}) {
   const childrenMap = getLineItemChildrenMap(cart?.lines?.nodes ?? []);
 
   return (
-    <section
-      className={className}
-      aria-label={layout === 'page' ? 'Cart page' : 'Cart drawer'}
-    >
+    <div className={className}>
       <CartEmpty hidden={linesCount} layout={layout} />
       <div className="cart-details">
         <p id="cart-lines" className="sr-only">
@@ -77,7 +74,7 @@ export function CartMain({layout, cart: originalCart}) {
         </div>
         {cartHasItems && <CartSummary cart={cart} layout={layout} />}
       </div>
-    </section>
+    </div>
   );
 }
 
@@ -113,5 +110,6 @@ function CartEmpty({hidden = false}) {
  */
 /** @typedef {{[parentId: string]: CartLine[]}} LineItemChildrenMap */
 
+/** @typedef {import('@shopify/hydrogen').OptimisticCartLine} OptimisticCartLine */
 /** @typedef {import('storefrontapi.generated').CartApiQueryFragment} CartApiQueryFragment */
 /** @typedef {import('~/components/CartLineItem').CartLine} CartLine */

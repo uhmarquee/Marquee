@@ -2,13 +2,12 @@ import * as React from 'react';
 import {Pagination} from '@shopify/hydrogen';
 
 /**
- * <PaginatedResourceSection> encapsulates the previous and next pagination behaviors throughout your application.
+ * <PaginatedResourceSection > is a component that encapsulate how the previous and next behaviors throughout your application.
  * @param {Class<Pagination<NodesType>>['connection']>}
  */
 export function PaginatedResourceSection({
   connection,
   children,
-  ariaLabel,
   resourcesClassName,
 }) {
   return (
@@ -21,33 +20,15 @@ export function PaginatedResourceSection({
         return (
           <div>
             <PreviousLink>
-              {isLoading ? (
-                'Loading...'
-              ) : (
-                <span>
-                  <span aria-hidden="true">↑</span> Load previous
-                </span>
-              )}
+              {isLoading ? 'Loading...' : <span>↑ Load previous</span>}
             </PreviousLink>
             {resourcesClassName ? (
-              <div
-                aria-label={ariaLabel}
-                className={resourcesClassName}
-                role={ariaLabel ? 'region' : undefined}
-              >
-                {resourcesMarkup}
-              </div>
+              <div className={resourcesClassName}>{resourcesMarkup}</div>
             ) : (
               resourcesMarkup
             )}
             <NextLink>
-              {isLoading ? (
-                'Loading...'
-              ) : (
-                <span>
-                  Load more <span aria-hidden="true">↓</span>
-                </span>
-              )}
+              {isLoading ? 'Loading...' : <span>Load more ↓</span>}
             </NextLink>
           </div>
         );

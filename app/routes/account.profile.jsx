@@ -18,7 +18,7 @@ export const meta = () => {
  * @param {Route.LoaderArgs}
  */
 export async function loader({context}) {
-  await context.customerAccount.handleAuthStatus();
+  context.customerAccount.handleAuthStatus();
 
   return {};
 }

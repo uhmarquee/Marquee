@@ -1,5 +1,5 @@
 import {CartForm, Money} from '@shopify/hydrogen';
-import {useEffect, useId, useRef, useState} from 'react';
+import {useEffect, useRef} from 'react';
 import {useFetcher} from 'react-router';
 
 /**
@@ -8,16 +8,11 @@ import {useFetcher} from 'react-router';
 export function CartSummary({cart, layout}) {
   const className =
     layout === 'page' ? 'cart-summary-page' : 'cart-summary-aside';
-  const summaryId = useId();
-  const discountsHeadingId = useId();
-  const discountCodeInputId = useId();
-  const giftCardHeadingId = useId();
-  const giftCardInputId = useId();
 
   return (
-    <div aria-labelledby={summaryId} className={className}>
-      <h4 id={summaryId}>Totals</h4>
-      <dl role="group" className="cart-subtotal">
+    <div aria-labelledby="cart-summary" className={className}>
+      <h4>Totals</h4>
+      <dl className="cart-subtotal">
         <dt>Subtotal</dt>
         <dd>
           {cart?.cost?.subtotalAmount?.amount ? (
@@ -27,16 +22,8 @@ export function CartSummary({cart, layout}) {
           )}
         </dd>
       </dl>
-      <CartDiscounts
-        discountCodes={cart?.discountCodes}
-        discountsHeadingId={discountsHeadingId}
-        discountCodeInputId={discountCodeInputId}
-      />
-      <CartGiftCard
-        giftCardCodes={cart?.appliedGiftCards}
-        giftCardHeadingId={giftCardHeadingId}
-        giftCardInputId={giftCardInputId}
-      />
+      <CartDiscounts discountCodes={cart?.discountCodes} />
+      <CartGiftCard giftCardCodes={cart?.appliedGiftCards} />
       <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} />
     </div>
   );
@@ -61,32 +48,22 @@ function CartCheckoutActions({checkoutUrl}) {
 /**
  * @param {{
  *   discountCodes?: CartApiQueryFragment['discountCodes'];
- *   discountsHeadingId: string;
- *   discountCodeInputId: string;
  * }}
  */
-function CartDiscounts({
-  discountCodes,
-  discountsHeadingId,
-  discountCodeInputId,
-}) {
+function CartDiscounts({discountCodes}) {
   const codes =
     discountCodes
       ?.filter((discount) => discount.applicable)
       ?.map(({code}) => code) || [];
 
   return (
-    <section aria-label="Discounts">
+    <div>
       {/* Have existing discount, display it with a remove option */}
       <dl hidden={!codes.length}>
         <div>
-          <dt id={discountsHeadingId}>Discounts</dt>
+          <dt>Discount(s)</dt>
           <UpdateDiscountForm>
-            <div
-              className="cart-discount"
-              role="group"
-              aria-labelledby={discountsHeadingId}
-            >
+            <div className="cart-discount">
               <code>{codes?.join(', ')}</code>
               &nbsp;
               <button type="submit" aria-label="Remove discount">
@@ -100,11 +77,11 @@ function CartDiscounts({
       {/* Show an input to apply a discount */}
       <UpdateDiscountForm discountCodes={codes}>
         <div>
-          <label htmlFor={discountCodeInputId} className="sr-only">
+          <label htmlFor="discount-code-input" className="sr-only">
             Discount code
           </label>
           <input
-            id={discountCodeInputId}
+            id="discount-code-input"
             type="text"
             name="discountCode"
             placeholder="Discount code"
@@ -115,7 +92,7 @@ function CartDiscounts({
           </button>
         </div>
       </UpdateDiscountForm>
-    </section>
+    </div>
   );
 }
 
@@ -142,108 +119,52 @@ function UpdateDiscountForm({discountCodes, children}) {
 /**
  * @param {{
  *   giftCardCodes: CartApiQueryFragment['appliedGiftCards'] | undefined;
- *   giftCardHeadingId: string;
- *   giftCardInputId: string;
  * }}
  */
-function CartGiftCard({giftCardCodes, giftCardHeadingId, giftCardInputId}) {
+function CartGiftCard({giftCardCodes}) {
   const giftCardCodeInput = useRef(null);
-  const removeButtonRefs = useRef(new Map());
-  const previousCardIdsRef = useRef([]);
   const giftCardAddFetcher = useFetcher({key: 'gift-card-add'});
-  const [removedCardIndex, setRemovedCardIndex] = useState(null);
 
   useEffect(() => {
     if (giftCardAddFetcher.data) {
-      if (giftCardCodeInput.current !== null) {
-        giftCardCodeInput.current.value = '';
-      }
+      giftCardCodeInput.current.value = '';
     }
   }, [giftCardAddFetcher.data]);
 
-  useEffect(() => {
-    const currentCardIds = giftCardCodes?.map((card) => card.id) || [];
-
-    if (removedCardIndex !== null && giftCardCodes) {
-      const focusTargetIndex = Math.min(
-        removedCardIndex,
-        giftCardCodes.length - 1,
-      );
-      const focusTargetCard = giftCardCodes[focusTargetIndex];
-      const focusButton = focusTargetCard
-        ? removeButtonRefs.current.get(focusTargetCard.id)
-        : null;
-
-      if (focusButton) {
-        focusButton.focus();
-      } else if (giftCardCodeInput.current) {
-        giftCardCodeInput.current.focus();
-      }
-
-      setRemovedCardIndex(null);
-    }
-
-    previousCardIdsRef.current = currentCardIds;
-  }, [giftCardCodes, removedCardIndex]);
-
-  const handleRemoveClick = (cardId) => {
-    const index = previousCardIdsRef.current.indexOf(cardId);
-    if (index !== -1) {
-      setRemovedCardIndex(index);
-    }
-  };
-
   return (
-    <section aria-label="Gift cards">
+    <div>
       {giftCardCodes && giftCardCodes.length > 0 && (
         <dl>
-          <dt id={giftCardHeadingId}>Applied Gift Card(s)</dt>
+          <dt>Applied Gift Card(s)</dt>
           {giftCardCodes.map((giftCard) => (
-            <dd key={giftCard.id} className="cart-discount">
-              <RemoveGiftCardForm
-                giftCardId={giftCard.id}
-                lastCharacters={giftCard.lastCharacters}
-                onRemoveClick={() => handleRemoveClick(giftCard.id)}
-                buttonRef={(el) => {
-                  if (el) {
-                    removeButtonRefs.current.set(giftCard.id, el);
-                  } else {
-                    removeButtonRefs.current.delete(giftCard.id);
-                  }
-                }}
-              >
+            <RemoveGiftCardForm key={giftCard.id} giftCardId={giftCard.id}>
+              <div className="cart-discount">
                 <code>***{giftCard.lastCharacters}</code>
                 &nbsp;
                 <Money data={giftCard.amountUsed} />
-              </RemoveGiftCardForm>
-            </dd>
+                &nbsp;
+                <button type="submit">Remove</button>
+              </div>
+            </RemoveGiftCardForm>
           ))}
         </dl>
       )}
 
       <AddGiftCardForm fetcherKey="gift-card-add">
         <div>
-          <label htmlFor={giftCardInputId} className="sr-only">
-            Gift card code
-          </label>
           <input
-            id={giftCardInputId}
             type="text"
             name="giftCardCode"
             placeholder="Gift card code"
             ref={giftCardCodeInput}
           />
           &nbsp;
-          <button
-            type="submit"
-            disabled={giftCardAddFetcher.state !== 'idle'}
-            aria-label="Apply gift card code"
-          >
+          <button type="submit" disabled={giftCardAddFetcher.state !== 'idle'}>
             Apply
           </button>
         </div>
       </AddGiftCardForm>
-    </section>
+    </div>
   );
 }
 
@@ -268,19 +189,10 @@ function AddGiftCardForm({fetcherKey, children}) {
 /**
  * @param {{
  *   giftCardId: string;
- *   lastCharacters: string;
  *   children: React.ReactNode;
- *   onRemoveClick?: () => void;
- *   buttonRef?: (el: HTMLButtonElement | null) => void;
  * }}
  */
-function RemoveGiftCardForm({
-  giftCardId,
-  lastCharacters,
-  children,
-  onRemoveClick,
-  buttonRef,
-}) {
+function RemoveGiftCardForm({giftCardId, children}) {
   return (
     <CartForm
       route="/cart"
@@ -290,15 +202,6 @@ function RemoveGiftCardForm({
       }}
     >
       {children}
-      &nbsp;
-      <button
-        type="submit"
-        aria-label={`Remove gift card ending in ${lastCharacters}`}
-        onClick={onRemoveClick}
-        ref={buttonRef}
-      >
-        Remove
-      </button>
     </CartForm>
   );
 }

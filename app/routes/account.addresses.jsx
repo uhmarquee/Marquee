@@ -22,7 +22,7 @@ export const meta = () => {
  * @param {Route.LoaderArgs}
  */
 export async function loader({context}) {
-  await context.customerAccount.handleAuthStatus();
+  context.customerAccount.handleAuthStatus();
 
   return {};
 }
@@ -460,7 +460,7 @@ export function AddressForm({addressId, address, defaultAddress, children}) {
         />
         <label htmlFor="territoryCode">Country Code*</label>
         <input
-          aria-label="Country code"
+          aria-label="territoryCode"
           autoComplete="country"
           defaultValue={address?.territoryCode ?? ''}
           id="territoryCode"

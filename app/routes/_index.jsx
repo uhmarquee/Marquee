@@ -88,11 +88,7 @@ function FeaturedCollection({collection}) {
     >
       {image && (
         <div className="featured-collection-image">
-          <Image
-            data={image}
-            sizes="100vw"
-            alt={image.altText || collection.title}
-          />
+          <Image data={image} sizes="100vw" />
         </div>
       )}
       <h1>{collection.title}</h1>
@@ -107,11 +103,8 @@ function FeaturedCollection({collection}) {
  */
 function RecommendedProducts({products}) {
   return (
-    <section
-      className="recommended-products"
-      aria-labelledby="recommended-products"
-    >
-      <h2 id="recommended-products">Recommended Products</h2>
+    <div className="recommended-products">
+      <h2>Recommended Products</h2>
       <Suspense fallback={<div>Loading...</div>}>
         <Await resolve={products}>
           {(response) => (
@@ -126,7 +119,7 @@ function RecommendedProducts({products}) {
         </Await>
       </Suspense>
       <br />
-    </section>
+    </div>
   );
 }
 
